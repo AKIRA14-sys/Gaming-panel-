@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -128,7 +129,7 @@ class CustomizerFragment : Fragment() {
         binding.llColorPresets.removeAllViews()
         for ((_, colorValue) in colorPairs) {
             val btn = Button(requireContext()).apply {
-                layoutParams = ViewGroup.MarginLayoutParams(100, 100).apply {
+                layoutParams = LinearLayout.LayoutParams(100, 100).apply {
                     setMargins(8, 0, 8, 0)
                 }
                 setBackgroundColor(colorValue)

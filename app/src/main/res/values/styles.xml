@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.GamePanelAI" parent="Theme.Material3.Dark.NoActionBar">
+    <style name="Theme.GamePanelAI" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/accent_cyan</item>
         <item name="colorOnPrimary">@color/bg_dark</item>
         <item name="colorSecondary">@color/accent_green</item>

@@ -39,11 +39,11 @@ class MainActivity : AppCompatActivity() {
         repository = ProfileRepository(this)
 
         if (savedInstanceState == null) {
-            navigateTo(NAV_HOME)
+            navigateTo(NAV_HOME, isRoot = true)
         }
     }
 
-    fun navigateTo(destination: String, bundle: Bundle? = null) {
+    fun navigateTo(destination: String, bundle: Bundle? = null, isRoot: Boolean = false) {
         val fragment: Fragment = when (destination) {
             NAV_HOME -> HomeFragment()
             NAV_GALLERY -> GalleryFragment()
@@ -59,14 +59,18 @@ class MainActivity : AppCompatActivity() {
 
         fragment.arguments = bundle
 
-        supportFragmentManager.beginTransaction()
+        val transaction = supportFragmentManager.beginTransaction()
             .replace(R.id.fragmentContainer, fragment)
-            .addToBackStack(destination)
-            .commit()
+
+        if (!isRoot) {
+            transaction.addToBackStack(destination)
+        }
+
+        transaction.commit()
     }
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 1) {
+        if (supportFragmentManager.backStackEntryCount > 0) {
             supportFragmentManager.popBackStack()
         } else {
             super.onBackPressed()
