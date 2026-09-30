@@ -1,0 +1,290 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_dark">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@color/bg_surface">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="GAMEPANEL AI"
+            android:textColor="@color/accent_cyan"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05" />
+
+        <TextView
+            android:id="@+id/tvOverlayStateBadge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="OFFLINE"
+            android:textColor="@color/text_muted"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            android:background="@color/bg_card"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <androidx.cardview.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/bg_card"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ACTIVE TARGET GAME"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <Spinner
+                        android:id="@+id/spinnerGameSelector"
+                        android:layout_width="match_parent"
+                        android:layout_height="48dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/bg_surface" />
+
+                    <TextView
+                        android:id="@+id/tvGameProfileInfo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Profile: Free Fire Main"
+                        android:textColor="@color/accent_green"
+                        android:textSize="12sp"
+                        android:layout_marginTop="6dp" />
+                </LinearLayout>
+            </androidx.cardview.CardView>
+
+            <androidx.cardview.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/bg_card"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:gravity="center_horizontal"
+                    android:padding="20dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="LIVE CROSSHAIR PREVIEW"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <FrameLayout
+                        android:layout_width="160dp"
+                        android:layout_height="160dp"
+                        android:layout_marginTop="12dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="@color/bg_surface">
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_gravity="center_vertical"
+                            android:background="@color/bg_card_stroke" />
+
+                        <View
+                            android:layout_width="1dp"
+                            android:layout_height="match_parent"
+                            android:layout_gravity="center_horizontal"
+                            android:background="@color/bg_card_stroke" />
+
+                        <com.gamepanel.ai.view.CrosshairView
+                            android:id="@+id/homeCrosshairPreview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center" />
+                    </FrameLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <Button
+                            android:id="@+id/btnStartOverlay"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="6dp"
+                            android:text="START CROSSHAIR"
+                            android:textStyle="bold"
+                            android:backgroundTint="@color/accent_cyan"
+                            android:textColor="@color/bg_dark" />
+
+                        <Button
+                            android:id="@+id/btnStopOverlay"
+                            android:layout_width="0dp"
+                            android:layout_height="50dp"
+                            android:layout_weight="1"
+                            android:layout_marginStart="6dp"
+                            android:text="STOP OVERLAY"
+                            android:textStyle="bold"
+                            android:backgroundTint="@color/accent_red"
+                            android:textColor="@color/text_primary" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/btnShowQuickPanel"
+                        android:layout_width="match_parent"
+                        android:layout_height="42dp"
+                        android:layout_marginTop="8dp"
+                        android:text="OPEN FLOATING PANEL"
+                        android:textSize="12sp"
+                        android:backgroundTint="@color/bg_surface"
+                        android:textColor="@color/accent_cyan" />
+                </LinearLayout>
+            </androidx.cardview.CardView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GAMING UTILITIES"
+                android:textColor="@color/text_secondary"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="2"
+                android:alignmentMode="alignBounds">
+
+                <Button
+                    android:id="@+id/navGallery"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:text="GALLERY (200+)"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/bg_card"
+                    android:textColor="@color/text_primary" />
+
+                <Button
+                    android:id="@+id/navCustomizer"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:text="CUSTOMIZER"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/bg_card"
+                    android:textColor="@color/text_primary" />
+
+                <Button
+                    android:id="@+id/navPositionEditor"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:text="POSITION EDITOR"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/bg_card"
+                    android:textColor="@color/text_primary" />
+
+                <Button
+                    android:id="@+id/navProfiles"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:text="PROFILES"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/bg_card"
+                    android:textColor="@color/text_primary" />
+
+                <Button
+                    android:id="@+id/navIntelligence"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:text="INTELLIGENCE"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/bg_card"
+                    android:textColor="@color/accent_cyan" />
+
+                <Button
+                    android:id="@+id/navCalibration"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:text="CALIBRATION"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/bg_card"
+                    android:textColor="@color/text_primary" />
+
+                <Button
+                    android:id="@+id/navPerformance"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:text="PERFORMANCE"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/bg_card"
+                    android:textColor="@color/text_primary" />
+
+                <Button
+                    android:id="@+id/navSettings"
+                    android:layout_width="0dp"
+                    android:layout_height="64dp"
+                    android:layout_columnWeight="1"
+                    android:layout_margin="4dp"
+                    android:text="SETTINGS"
+                    android:textSize="12sp"
+                    android:backgroundTint="@color/bg_card"
+                    android:textColor="@color/text_primary" />
+            </GridLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

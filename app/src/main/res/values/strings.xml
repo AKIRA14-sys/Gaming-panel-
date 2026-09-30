@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">GamePanel AI</string>
+    <string name="channel_name">GamePanel AI Overlay</string>
+    <string name="channel_description">Notification for active crosshair floating overlay</string>
+</resources>
