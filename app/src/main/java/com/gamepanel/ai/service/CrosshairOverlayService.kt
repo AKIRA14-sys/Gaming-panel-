@@ -4,6 +4,7 @@ import android.app.*
 import android.content.Context
 import android.content.Intent
 import android.content.pm.ServiceInfo
+import android.graphics.Color
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
@@ -104,7 +105,8 @@ class CrosshairOverlayService : Service() {
             WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
                     WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
                     WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                    WindowManager.LayoutParams.FLAG_SECURE, // Anti Screen Recording Protection
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.CENTER
@@ -162,7 +164,7 @@ class CrosshairOverlayService : Service() {
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             layoutType,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_SECURE,
             PixelFormat.TRANSLUCENT
         ).apply {
             gravity = Gravity.TOP or Gravity.START
@@ -179,7 +181,24 @@ class CrosshairOverlayService : Service() {
         val sbOpacity = quickPanelView?.findViewById<SeekBar>(R.id.sbPanelOpacity)
         val sbSize = quickPanelView?.findViewById<SeekBar>(R.id.sbPanelSize)
 
-        tvActiveGame?.text = "Game: ${currentProfile?.gameName ?: "Free Fire"}"
+        // Quick Controls
+        val btnPrev = quickPanelView?.findViewById<Button>(R.id.btnPrevDesign)
+        val btnNext = quickPanelView?.findViewById<Button>(R.id.btnNextDesign)
+        val tvDesignLabel = quickPanelView?.findViewById<TextView>(R.id.tvCurrentDesignLabel)
+
+        val btnColorCyan = quickPanelView?.findViewById<Button>(R.id.btnColorCyan)
+        val btnColorRed = quickPanelView?.findViewById<Button>(R.id.btnColorRed)
+        val btnColorGreen = quickPanelView?.findViewById<Button>(R.id.btnColorGreen)
+        val btnColorYellow = quickPanelView?.findViewById<Button>(R.id.btnColorYellow)
+        val btnColorWhite = quickPanelView?.findViewById<Button>(R.id.btnColorWhite)
+
+        val btnMoveLeft = quickPanelView?.findViewById<Button>(R.id.btnMoveLeft)
+        val btnMoveRight = quickPanelView?.findViewById<Button>(R.id.btnMoveRight)
+        val btnMoveUp = quickPanelView?.findViewById<Button>(R.id.btnMoveUp)
+        val btnMoveDown = quickPanelView?.findViewById<Button>(R.id.btnMoveDown)
+        val btnMoveCenter = quickPanelView?.findViewById<Button>(R.id.btnMoveCenter)
+
+        tvActiveGame?.text = "GAME: ${currentProfile?.gameName ?: "Free Fire"}"
 
         btnToggle?.setOnClickListener {
             val isVisible = crosshairOverlayView?.visibility == View.VISIBLE
@@ -187,9 +206,7 @@ class CrosshairOverlayService : Service() {
             btnToggle.text = if (isVisible) "OFF" else "ON"
         }
 
-        btnClose?.setOnClickListener {
-            removeQuickPanel()
-        }
+        btnClose?.setOnClickListener { removeQuickPanel() }
 
         btnOpenApp?.setOnClickListener {
             val appIntent = Intent(this, MainActivity::class.java).apply {
@@ -203,6 +220,45 @@ class CrosshairOverlayService : Service() {
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
         }
+
+        // Quick Crosshair Design Switcher
+        fun updateDesignLabel() {
+            val num = currentProfile?.crosshairAsset?.substringAfter("crosshair_")?.substringBefore(".png") ?: "1"
+            tvDesignLabel?.text = "#$num"
+        }
+        updateDesignLabel()
+
+        btnPrev?.setOnClickListener {
+            val curNum = currentProfile?.crosshairAsset?.substringAfter("crosshair_")?.substringBefore(".png")?.toIntOrNull() ?: 1
+            val prevNum = if (curNum > 1) curNum - 1 else 219
+            currentProfile?.crosshairAsset = "crosshairs/crosshair_$prevNum.png"
+            currentProfile?.let { p -> repository.saveProfile(p) }
+            updateDesignLabel()
+            updateCrosshairView()
+        }
+
+        btnNext?.setOnClickListener {
+            val curNum = currentProfile?.crosshairAsset?.substringAfter("crosshair_")?.substringBefore(".png")?.toIntOrNull() ?: 1
+            val nextNum = if (curNum < 219) curNum + 1 else 1
+            currentProfile?.crosshairAsset = "crosshairs/crosshair_$nextNum.png"
+            currentProfile?.let { p -> repository.saveProfile(p) }
+            updateDesignLabel()
+            updateCrosshairView()
+        }
+
+        // Quick Color Switchers
+        btnColorCyan?.setOnClickListener { currentProfile?.color = Color.CYAN; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+        btnColorRed?.setOnClickListener { currentProfile?.color = Color.RED; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+        btnColorGreen?.setOnClickListener { currentProfile?.color = Color.GREEN; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+        btnColorYellow?.setOnClickListener { currentProfile?.color = Color.YELLOW; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+        btnColorWhite?.setOnClickListener { currentProfile?.color = Color.WHITE; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+
+        // Position Nudge
+        btnMoveLeft?.setOnClickListener { currentProfile?.let { it.offsetX -= 2; repository.saveProfile(it); updateCrosshairView() } }
+        btnMoveRight?.setOnClickListener { currentProfile?.let { it.offsetX += 2; repository.saveProfile(it); updateCrosshairView() } }
+        btnMoveUp?.setOnClickListener { currentProfile?.let { it.offsetY -= 2; repository.saveProfile(it); updateCrosshairView() } }
+        btnMoveDown?.setOnClickListener { currentProfile?.let { it.offsetY += 2; repository.saveProfile(it); updateCrosshairView() } }
+        btnMoveCenter?.setOnClickListener { currentProfile?.let { it.offsetX = 0; it.offsetY = 0; repository.saveProfile(it); updateCrosshairView() } }
 
         currentProfile?.let { p ->
             sbOpacity?.progress = (p.opacity * 100).toInt()

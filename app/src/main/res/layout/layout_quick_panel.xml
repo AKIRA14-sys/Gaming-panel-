@@ -1,30 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/panelRoot"
-    android:layout_width="260dp"
+    android:layout_width="280dp"
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:background="@color/bg_card"
     android:padding="12dp"
     android:elevation="8dp">
 
+    <!-- Header Drag Bar -->
     <LinearLayout
         android:id="@+id/panelHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingBottom="8dp">
+        android:paddingBottom="6dp">
 
         <TextView
             android:id="@+id/tvPanelTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="GamePanel AI"
+            android:text="⚡ GAMEPANEL CHEAT HUB"
             android:textColor="@color/accent_cyan"
             android:textStyle="bold"
-            android:textSize="14sp" />
+            android:textSize="12sp" />
 
         <Button
             android:id="@+id/btnToggleCrosshair"
@@ -32,8 +33,8 @@
             android:layout_height="32dp"
             android:text="ON"
             android:textSize="10sp"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp" />
+            android:backgroundTint="@color/accent_green"
+            android:textColor="@color/bg_dark" />
 
         <ImageButton
             android:id="@+id/btnClosePanel"
@@ -48,24 +49,82 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="@color/bg_card_stroke"
-        android:layout_marginBottom="8dp" />
+        android:layout_marginBottom="6dp" />
 
+    <!-- Game Profile Quick Switch -->
     <TextView
         android:id="@+id/tvActiveGame"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Game: Free Fire"
-        android:textColor="@color/text_primary"
-        android:textSize="12sp"
+        android:text="GAME: Free Fire"
+        android:textColor="@color/accent_green"
+        android:textSize="11sp"
         android:textStyle="bold" />
 
+    <!-- Crosshair Selector -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="4dp">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Design Design"
+            android:textColor="@color/text_secondary"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/btnPrevDesign"
+            android:layout_width="36dp"
+            android:layout_height="32dp"
+            android:text="&lt;"
+            android:textSize="10sp" />
+
+        <TextView
+            android:id="@+id/tvCurrentDesignLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="#1"
+            android:textColor="@color/text_primary"
+            android:textSize="11sp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp" />
+
+        <Button
+            android:id="@+id/btnNextDesign"
+            android:layout_width="36dp"
+            android:layout_height="32dp"
+            android:text="&gt;"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <!-- Quick Color Palette -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginTop="4dp">
+
+        <Button android:id="@+id/btnColorCyan" android:layout_width="0dp" android:layout_height="28dp" android:layout_weight="1" android:backgroundTint="@color/accent_cyan" android:layout_margin="1dp" />
+        <Button android:id="@+id/btnColorRed" android:layout_width="0dp" android:layout_height="28dp" android:layout_weight="1" android:backgroundTint="@color/accent_red" android:layout_margin="1dp" />
+        <Button android:id="@+id/btnColorGreen" android:layout_width="0dp" android:layout_height="28dp" android:layout_weight="1" android:backgroundTint="@color/accent_green" android:layout_margin="1dp" />
+        <Button android:id="@+id/btnColorYellow" android:layout_width="0dp" android:layout_height="28dp" android:layout_weight="1" android:backgroundTint="@color/accent_yellow" android:layout_margin="1dp" />
+        <Button android:id="@+id/btnColorWhite" android:layout_width="0dp" android:layout_height="28dp" android:layout_weight="1" android:backgroundTint="@color/text_primary" android:layout_margin="1dp" />
+    </LinearLayout>
+
+    <!-- Opacity Slider -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Opacity"
         android:textColor="@color/text_secondary"
         android:textSize="10sp"
-        android:layout_marginTop="6dp" />
+        android:layout_marginTop="4dp" />
 
     <SeekBar
         android:id="@+id/sbPanelOpacity"
@@ -74,13 +133,14 @@
         android:max="100"
         android:progress="75" />
 
+    <!-- Size Slider -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Size"
         android:textColor="@color/text_secondary"
         android:textSize="10sp"
-        android:layout_marginTop="4dp" />
+        android:layout_marginTop="2dp" />
 
     <SeekBar
         android:id="@+id/sbPanelSize"
@@ -89,29 +149,45 @@
         android:max="100"
         android:progress="35" />
 
+    <!-- Position Nudge Controls -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:layout_marginTop="8dp">
+        android:gravity="center"
+        android:layout_marginTop="4dp">
+
+        <Button android:id="@+id/btnMoveLeft" android:layout_width="40dp" android:layout_height="32dp" android:text="←" android:textSize="10sp" />
+        <Button android:id="@+id/btnMoveUp" android:layout_width="40dp" android:layout_height="32dp" android:text="↑" android:textSize="10sp" />
+        <Button android:id="@+id/btnMoveDown" android:layout_width="40dp" android:layout_height="32dp" android:text="↓" android:textSize="10sp" />
+        <Button android:id="@+id/btnMoveRight" android:layout_width="40dp" android:layout_height="32dp" android:text="→" android:textSize="10sp" />
+        <Button android:id="@+id/btnMoveCenter" android:layout_width="50dp" android:layout_height="32dp" android:text="CLR" android:textSize="8sp" />
+    </LinearLayout>
+
+    <!-- Action Buttons -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="6dp">
 
         <Button
             android:id="@+id/btnOpenApp"
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_weight="1"
-            android:layout_marginEnd="4dp"
+            android:layout_marginEnd="2dp"
             android:text="Open App"
-            android:textSize="11sp" />
+            android:textSize="10sp" />
 
         <Button
             android:id="@+id/btnStopOverlay"
             android:layout_width="0dp"
             android:layout_height="36dp"
             android:layout_weight="1"
-            android:layout_marginStart="4dp"
+            android:layout_marginStart="2dp"
             android:text="Stop Overlay"
-            android:textSize="11sp" />
+            android:textSize="10sp" />
     </LinearLayout>
 
 </LinearLayout>
