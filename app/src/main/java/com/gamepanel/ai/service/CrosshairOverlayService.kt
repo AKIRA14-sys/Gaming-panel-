@@ -57,27 +57,31 @@ class CrosshairOverlayService : Service() {
             return START_NOT_STICKY
         }
 
-        val notification = createNotification()
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
-        } else {
-            startForeground(NOTIF_ID, notification)
-        }
-        repository.setOverlayActive(true)
+        try {
+            val notification = createNotification()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+            } else {
+                startForeground(NOTIF_ID, notification)
+            }
+            repository.setOverlayActive(true)
 
-        val activeGameId = repository.getActiveGameId()
-        currentProfile = repository.getActiveProfileForGame(activeGameId)
+            val activeGameId = repository.getActiveGameId()
+            currentProfile = repository.getActiveProfileForGame(activeGameId)
 
-        if (crosshairOverlayView == null) {
-            setupCrosshairOverlay()
-        } else {
-            updateCrosshairView()
-        }
+            if (crosshairOverlayView == null) {
+                setupCrosshairOverlay()
+            } else {
+                updateCrosshairView()
+            }
 
-        if (intent?.action == ACTION_SHOW_PANEL && quickPanelView == null) {
-            setupQuickPanel()
+            if (intent?.action == ACTION_SHOW_PANEL && quickPanelView == null) {
+                setupQuickPanel()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
 
         return START_STICKY
@@ -85,36 +89,37 @@ class CrosshairOverlayService : Service() {
 
     private fun setupCrosshairOverlay() {
         val profile = currentProfile ?: return
-        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        crosshairOverlayView = inflater.inflate(R.layout.layout_crosshair_overlay, null)
-        crosshairView = crosshairOverlayView?.findViewById(R.id.crosshairView)
-
-        updateCrosshairView()
-
-        val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            @Suppress("DEPRECATION")
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
-
-        crosshairParams = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            layoutType,
-            WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
-                    WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
-                    WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
-                    WindowManager.LayoutParams.FLAG_SECURE, // Anti Screen Recording Protection
-            PixelFormat.TRANSLUCENT
-        ).apply {
-            gravity = Gravity.CENTER
-            x = profile.offsetX
-            y = profile.offsetY
-        }
-
         try {
+            val themedContext = ContextThemeWrapper(this, R.style.Theme_GamePanelAI)
+            val inflater = LayoutInflater.from(themedContext)
+            crosshairOverlayView = inflater.inflate(R.layout.layout_crosshair_overlay, null)
+            crosshairView = crosshairOverlayView?.findViewById(R.id.crosshairView)
+
+            updateCrosshairView()
+
+            val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            } else {
+                @Suppress("DEPRECATION")
+                WindowManager.LayoutParams.TYPE_PHONE
+            }
+
+            crosshairParams = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                layoutType,
+                WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE or
+                        WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN or
+                        WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS or
+                        WindowManager.LayoutParams.FLAG_SECURE,
+                PixelFormat.TRANSLUCENT
+            ).apply {
+                gravity = Gravity.CENTER
+                x = profile.offsetX
+                y = profile.offsetY
+            }
+
             windowManager.addView(crosshairOverlayView, crosshairParams)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -150,178 +155,175 @@ class CrosshairOverlayService : Service() {
     }
 
     private fun setupQuickPanel() {
-        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        quickPanelView = inflater.inflate(R.layout.layout_quick_panel, null)
-
-        val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
-        } else {
-            @Suppress("DEPRECATION")
-            WindowManager.LayoutParams.TYPE_PHONE
-        }
-
-        quickPanelParams = WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            layoutType,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_SECURE,
-            PixelFormat.TRANSLUCENT
-        ).apply {
-            gravity = Gravity.TOP or Gravity.START
-            x = 100
-            y = 200
-        }
-
-        val panelHeader = quickPanelView?.findViewById<View>(R.id.panelHeader)
-        val tvActiveGame = quickPanelView?.findViewById<TextView>(R.id.tvActiveGame)
-        val btnToggle = quickPanelView?.findViewById<Button>(R.id.btnToggleCrosshair)
-        val btnClose = quickPanelView?.findViewById<ImageButton>(R.id.btnClosePanel)
-        val btnOpenApp = quickPanelView?.findViewById<Button>(R.id.btnOpenApp)
-        val btnStopOverlay = quickPanelView?.findViewById<Button>(R.id.btnStopOverlay)
-        val sbOpacity = quickPanelView?.findViewById<SeekBar>(R.id.sbPanelOpacity)
-        val sbSize = quickPanelView?.findViewById<SeekBar>(R.id.sbPanelSize)
-
-        // Quick Controls
-        val btnPrev = quickPanelView?.findViewById<Button>(R.id.btnPrevDesign)
-        val btnNext = quickPanelView?.findViewById<Button>(R.id.btnNextDesign)
-        val tvDesignLabel = quickPanelView?.findViewById<TextView>(R.id.tvCurrentDesignLabel)
-
-        val btnColorCyan = quickPanelView?.findViewById<Button>(R.id.btnColorCyan)
-        val btnColorRed = quickPanelView?.findViewById<Button>(R.id.btnColorRed)
-        val btnColorGreen = quickPanelView?.findViewById<Button>(R.id.btnColorGreen)
-        val btnColorYellow = quickPanelView?.findViewById<Button>(R.id.btnColorYellow)
-        val btnColorWhite = quickPanelView?.findViewById<Button>(R.id.btnColorWhite)
-
-        val btnMoveLeft = quickPanelView?.findViewById<Button>(R.id.btnMoveLeft)
-        val btnMoveRight = quickPanelView?.findViewById<Button>(R.id.btnMoveRight)
-        val btnMoveUp = quickPanelView?.findViewById<Button>(R.id.btnMoveUp)
-        val btnMoveDown = quickPanelView?.findViewById<Button>(R.id.btnMoveDown)
-        val btnMoveCenter = quickPanelView?.findViewById<Button>(R.id.btnMoveCenter)
-
-        tvActiveGame?.text = "GAME: ${currentProfile?.gameName ?: "Free Fire"}"
-
-        btnToggle?.setOnClickListener {
-            val isVisible = crosshairOverlayView?.visibility == View.VISIBLE
-            crosshairOverlayView?.visibility = if (isVisible) View.GONE else View.VISIBLE
-            btnToggle.text = if (isVisible) "OFF" else "ON"
-        }
-
-        btnClose?.setOnClickListener { removeQuickPanel() }
-
-        btnOpenApp?.setOnClickListener {
-            val appIntent = Intent(this, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
-            }
-            startActivity(appIntent)
-        }
-
-        btnStopOverlay?.setOnClickListener {
-            repository.setOverlayActive(false)
-            stopForeground(STOP_FOREGROUND_REMOVE)
-            stopSelf()
-        }
-
-        // Quick Crosshair Design Switcher
-        fun updateDesignLabel() {
-            val num = currentProfile?.crosshairAsset?.substringAfter("crosshair_")?.substringBefore(".png") ?: "1"
-            tvDesignLabel?.text = "#$num"
-        }
-        updateDesignLabel()
-
-        btnPrev?.setOnClickListener {
-            val curNum = currentProfile?.crosshairAsset?.substringAfter("crosshair_")?.substringBefore(".png")?.toIntOrNull() ?: 1
-            val prevNum = if (curNum > 1) curNum - 1 else 219
-            currentProfile?.crosshairAsset = "crosshairs/crosshair_$prevNum.png"
-            currentProfile?.let { p -> repository.saveProfile(p) }
-            updateDesignLabel()
-            updateCrosshairView()
-        }
-
-        btnNext?.setOnClickListener {
-            val curNum = currentProfile?.crosshairAsset?.substringAfter("crosshair_")?.substringBefore(".png")?.toIntOrNull() ?: 1
-            val nextNum = if (curNum < 219) curNum + 1 else 1
-            currentProfile?.crosshairAsset = "crosshairs/crosshair_$nextNum.png"
-            currentProfile?.let { p -> repository.saveProfile(p) }
-            updateDesignLabel()
-            updateCrosshairView()
-        }
-
-        // Quick Color Switchers
-        btnColorCyan?.setOnClickListener { currentProfile?.color = Color.CYAN; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
-        btnColorRed?.setOnClickListener { currentProfile?.color = Color.RED; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
-        btnColorGreen?.setOnClickListener { currentProfile?.color = Color.GREEN; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
-        btnColorYellow?.setOnClickListener { currentProfile?.color = Color.YELLOW; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
-        btnColorWhite?.setOnClickListener { currentProfile?.color = Color.WHITE; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
-
-        // Position Nudge
-        btnMoveLeft?.setOnClickListener { currentProfile?.let { it.offsetX -= 2; repository.saveProfile(it); updateCrosshairView() } }
-        btnMoveRight?.setOnClickListener { currentProfile?.let { it.offsetX += 2; repository.saveProfile(it); updateCrosshairView() } }
-        btnMoveUp?.setOnClickListener { currentProfile?.let { it.offsetY -= 2; repository.saveProfile(it); updateCrosshairView() } }
-        btnMoveDown?.setOnClickListener { currentProfile?.let { it.offsetY += 2; repository.saveProfile(it); updateCrosshairView() } }
-        btnMoveCenter?.setOnClickListener { currentProfile?.let { it.offsetX = 0; it.offsetY = 0; repository.saveProfile(it); updateCrosshairView() } }
-
-        currentProfile?.let { p ->
-            sbOpacity?.progress = (p.opacity * 100).toInt()
-            sbSize?.progress = p.sizeDp.toInt()
-        }
-
-        sbOpacity?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    currentProfile?.let { p ->
-                        p.opacity = progress / 100f
-                        repository.saveProfile(p)
-                        updateCrosshairView()
-                    }
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        sbSize?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                if (fromUser) {
-                    currentProfile?.let { p ->
-                        p.sizeDp = progress.coerceAtLeast(12).toFloat()
-                        repository.saveProfile(p)
-                        updateCrosshairView()
-                    }
-                }
-            }
-            override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-            override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-        })
-
-        var initialX = 0
-        var initialY = 0
-        var initialTouchX = 0f
-        var initialTouchY = 0f
-
-        panelHeader?.setOnTouchListener { _, event ->
-            when (event.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    initialX = quickPanelParams?.x ?: 0
-                    initialY = quickPanelParams?.y ?: 0
-                    initialTouchX = event.rawX
-                    initialTouchY = event.rawY
-                    true
-                }
-                MotionEvent.ACTION_MOVE -> {
-                    quickPanelParams?.x = initialX + (event.rawX - initialTouchX).toInt()
-                    quickPanelParams?.y = initialY + (event.rawY - initialTouchY).toInt()
-                    try {
-                        windowManager.updateViewLayout(quickPanelView, quickPanelParams)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                    true
-                }
-                else -> false
-            }
-        }
-
         try {
+            val themedContext = ContextThemeWrapper(this, R.style.Theme_GamePanelAI)
+            val inflater = LayoutInflater.from(themedContext)
+            quickPanelView = inflater.inflate(R.layout.layout_quick_panel, null)
+
+            val layoutType = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+            } else {
+                @Suppress("DEPRECATION")
+                WindowManager.LayoutParams.TYPE_PHONE
+            }
+
+            quickPanelParams = WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                layoutType,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE or WindowManager.LayoutParams.FLAG_SECURE,
+                PixelFormat.TRANSLUCENT
+            ).apply {
+                gravity = Gravity.TOP or Gravity.START
+                x = 100
+                y = 200
+            }
+
+            val panelHeader = quickPanelView?.findViewById<View>(R.id.panelHeader)
+            val tvActiveGame = quickPanelView?.findViewById<TextView>(R.id.tvActiveGame)
+            val btnToggle = quickPanelView?.findViewById<Button>(R.id.btnToggleCrosshair)
+            val btnClose = quickPanelView?.findViewById<ImageButton>(R.id.btnClosePanel)
+            val btnOpenApp = quickPanelView?.findViewById<Button>(R.id.btnOpenApp)
+            val btnStopOverlay = quickPanelView?.findViewById<Button>(R.id.btnStopOverlay)
+            val sbOpacity = quickPanelView?.findViewById<SeekBar>(R.id.sbPanelOpacity)
+            val sbSize = quickPanelView?.findViewById<SeekBar>(R.id.sbPanelSize)
+
+            val btnPrev = quickPanelView?.findViewById<Button>(R.id.btnPrevDesign)
+            val btnNext = quickPanelView?.findViewById<Button>(R.id.btnNextDesign)
+            val tvDesignLabel = quickPanelView?.findViewById<TextView>(R.id.tvCurrentDesignLabel)
+
+            val btnColorCyan = quickPanelView?.findViewById<Button>(R.id.btnColorCyan)
+            val btnColorRed = quickPanelView?.findViewById<Button>(R.id.btnColorRed)
+            val btnColorGreen = quickPanelView?.findViewById<Button>(R.id.btnColorGreen)
+            val btnColorYellow = quickPanelView?.findViewById<Button>(R.id.btnColorYellow)
+            val btnColorWhite = quickPanelView?.findViewById<Button>(R.id.btnColorWhite)
+
+            val btnMoveLeft = quickPanelView?.findViewById<Button>(R.id.btnMoveLeft)
+            val btnMoveRight = quickPanelView?.findViewById<Button>(R.id.btnMoveRight)
+            val btnMoveUp = quickPanelView?.findViewById<Button>(R.id.btnMoveUp)
+            val btnMoveDown = quickPanelView?.findViewById<Button>(R.id.btnMoveDown)
+            val btnMoveCenter = quickPanelView?.findViewById<Button>(R.id.btnMoveCenter)
+
+            tvActiveGame?.text = "GAME: ${currentProfile?.gameName ?: "Free Fire"}"
+
+            btnToggle?.setOnClickListener {
+                val isVisible = crosshairOverlayView?.visibility == View.VISIBLE
+                crosshairOverlayView?.visibility = if (isVisible) View.GONE else View.VISIBLE
+                btnToggle.text = if (isVisible) "OFF" else "ON"
+            }
+
+            btnClose?.setOnClickListener { removeQuickPanel() }
+
+            btnOpenApp?.setOnClickListener {
+                val appIntent = Intent(this, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
+                }
+                startActivity(appIntent)
+            }
+
+            btnStopOverlay?.setOnClickListener {
+                repository.setOverlayActive(false)
+                stopForeground(STOP_FOREGROUND_REMOVE)
+                stopSelf()
+            }
+
+            fun updateDesignLabel() {
+                val num = currentProfile?.crosshairAsset?.substringAfter("crosshair_")?.substringBefore(".png") ?: "1"
+                tvDesignLabel?.text = "#$num"
+            }
+            updateDesignLabel()
+
+            btnPrev?.setOnClickListener {
+                val curNum = currentProfile?.crosshairAsset?.substringAfter("crosshair_")?.substringBefore(".png")?.toIntOrNull() ?: 1
+                val prevNum = if (curNum > 1) curNum - 1 else 219
+                currentProfile?.crosshairAsset = "crosshairs/crosshair_$prevNum.png"
+                currentProfile?.let { p -> repository.saveProfile(p) }
+                updateDesignLabel()
+                updateCrosshairView()
+            }
+
+            btnNext?.setOnClickListener {
+                val curNum = currentProfile?.crosshairAsset?.substringAfter("crosshair_")?.substringBefore(".png")?.toIntOrNull() ?: 1
+                val nextNum = if (curNum < 219) curNum + 1 else 1
+                currentProfile?.crosshairAsset = "crosshairs/crosshair_$nextNum.png"
+                currentProfile?.let { p -> repository.saveProfile(p) }
+                updateDesignLabel()
+                updateCrosshairView()
+            }
+
+            btnColorCyan?.setOnClickListener { currentProfile?.color = Color.CYAN; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+            btnColorRed?.setOnClickListener { currentProfile?.color = Color.RED; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+            btnColorGreen?.setOnClickListener { currentProfile?.color = Color.GREEN; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+            btnColorYellow?.setOnClickListener { currentProfile?.color = Color.YELLOW; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+            btnColorWhite?.setOnClickListener { currentProfile?.color = Color.WHITE; currentProfile?.let { repository.saveProfile(it) }; updateCrosshairView() }
+
+            btnMoveLeft?.setOnClickListener { currentProfile?.let { it.offsetX -= 2; repository.saveProfile(it); updateCrosshairView() } }
+            btnMoveRight?.setOnClickListener { currentProfile?.let { it.offsetX += 2; repository.saveProfile(it); updateCrosshairView() } }
+            btnMoveUp?.setOnClickListener { currentProfile?.let { it.offsetY -= 2; repository.saveProfile(it); updateCrosshairView() } }
+            btnMoveDown?.setOnClickListener { currentProfile?.let { it.offsetY += 2; repository.saveProfile(it); updateCrosshairView() } }
+            btnMoveCenter?.setOnClickListener { currentProfile?.let { it.offsetX = 0; it.offsetY = 0; repository.saveProfile(it); updateCrosshairView() } }
+
+            currentProfile?.let { p ->
+                sbOpacity?.progress = (p.opacity * 100).toInt()
+                sbSize?.progress = p.sizeDp.toInt()
+            }
+
+            sbOpacity?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    if (fromUser) {
+                        currentProfile?.let { p ->
+                            p.opacity = progress / 100f
+                            repository.saveProfile(p)
+                            updateCrosshairView()
+                        }
+                    }
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+
+            sbSize?.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                    if (fromUser) {
+                        currentProfile?.let { p ->
+                            p.sizeDp = progress.coerceAtLeast(12).toFloat()
+                            repository.saveProfile(p)
+                            updateCrosshairView()
+                        }
+                    }
+                }
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
+
+            var initialX = 0
+            var initialY = 0
+            var initialTouchX = 0f
+            var initialTouchY = 0f
+
+            panelHeader?.setOnTouchListener { _, event ->
+                when (event.action) {
+                    MotionEvent.ACTION_DOWN -> {
+                        initialX = quickPanelParams?.x ?: 0
+                        initialY = quickPanelParams?.y ?: 0
+                        initialTouchX = event.rawX
+                        initialTouchY = event.rawY
+                        true
+                    }
+                    MotionEvent.ACTION_MOVE -> {
+                        quickPanelParams?.x = initialX + (event.rawX - initialTouchX).toInt()
+                        quickPanelParams?.y = initialY + (event.rawY - initialTouchY).toInt()
+                        try {
+                            windowManager.updateViewLayout(quickPanelView, quickPanelParams)
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                        }
+                        true
+                    }
+                    else -> false
+                }
+            }
+
             windowManager.addView(quickPanelView, quickPanelParams)
         } catch (e: Exception) {
             e.printStackTrace()
