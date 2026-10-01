@@ -3,6 +3,7 @@ package com.gamepanel.ai.service
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ServiceInfo
 import android.graphics.PixelFormat
 import android.os.Build
 import android.os.IBinder
@@ -56,10 +57,15 @@ class CrosshairOverlayService : Service() {
         }
 
         val notification = createNotification()
-        startForeground(NOTIF_ID, notification)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_SPECIAL_USE)
+        } else {
+            startForeground(NOTIF_ID, notification)
+        }
         repository.setOverlayActive(true)
 
-        // Load active game profile
         val activeGameId = repository.getActiveGameId()
         currentProfile = repository.getActiveProfileForGame(activeGameId)
 
@@ -231,7 +237,6 @@ class CrosshairOverlayService : Service() {
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
         })
 
-        // Touch listener for dragging Quick Panel
         var initialX = 0
         var initialY = 0
         var initialTouchX = 0f

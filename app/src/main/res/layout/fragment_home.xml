@@ -52,7 +52,7 @@
             android:padding="16dp">
 
             <!-- Target Game Selector Card -->
-            <androidx.cardview.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -90,10 +90,10 @@
                         android:textSize="12sp"
                         android:layout_marginTop="6dp" />
                 </LinearLayout>
-            </androidx.cardview.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Crosshair Preview & Main Action Card -->
-            <androidx.cardview.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -180,7 +180,7 @@
                         android:backgroundTint="@color/bg_surface"
                         android:textColor="@color/accent_cyan" />
                 </LinearLayout>
-            </androidx.cardview.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
             <!-- Navigation Grid to Utility Sections -->
             <TextView

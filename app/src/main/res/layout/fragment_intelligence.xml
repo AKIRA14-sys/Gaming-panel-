@@ -44,7 +44,7 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <androidx.cardview.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
@@ -143,7 +143,7 @@
                         android:textColor="@color/bg_dark" />
 
                 </LinearLayout>
-            </androidx.cardview.CardView>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </ScrollView>
