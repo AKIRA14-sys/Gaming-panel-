@@ -1,10 +1,12 @@
 package com.gamepanel.ai.data
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ProfileRepository(context: Context) {
+class ProfileRepository(private val context: Context) {
 
     private val prefs = context.getSharedPreferences("gamepanel_ai_prefs", Context.MODE_PRIVATE)
 
@@ -14,7 +16,7 @@ class ProfileRepository(context: Context) {
         const val KEY_ACTIVE_PROFILE_PREFIX = "active_profile_id_"
         const val KEY_OVERLAY_ACTIVE = "overlay_active"
 
-        val SUPPORTED_GAMES = listOf(
+        val DEFAULT_SUPPORTED_GAMES = listOf(
             GameItem("free_fire", "Free Fire", "com.dts.freefireth"),
             GameItem("free_fire_max", "Free Fire MAX", "com.dts.freefiremax"),
             GameItem("cod_mobile", "Call of Duty: Mobile", "com.activision.callofduty.shooter"),
@@ -22,6 +24,41 @@ class ProfileRepository(context: Context) {
             GameItem("pubg_mobile", "PUBG Mobile", "com.tencent.ig"),
             GameItem("other_games", "Other Games", null)
         )
+    }
+
+    fun getInstalledAndDefaultGames(): List<GameItem> {
+        val gameList = mutableListOf<GameItem>()
+        gameList.addAll(DEFAULT_SUPPORTED_GAMES.filter { it.id != "other_games" })
+
+        try {
+            val pm = context.packageManager
+            val intent = Intent(Intent.ACTION_MAIN, null).apply {
+                addCategory(Intent.CATEGORY_LAUNCHER)
+            }
+            val apps = pm.queryIntentActivities(intent, 0)
+            for (app in apps) {
+                val pkgName = app.activityInfo.packageName
+                val appName = app.loadLabel(pm).toString()
+
+                // Check if package looks like a game or not already added
+                if (!gameList.any { it.packageName == pkgName }) {
+                    val lower = appName.lowercase()
+                    if (lower.contains("game") or lower.contains("fire") or lower.contains("duty") or
+                        lower.contains("pubg") or lower.contains("strike") or lower.contains("legend") or
+                        lower.contains("arena") or lower.contains("clash") or lower.contains("shadow") or
+                        lower.contains("apex") or lower.contains("fortnite") or lower.contains("roblox") or
+                        lower.contains("minecraft") or lower.contains("brawl")) {
+                        val gameId = "pkg_${pkgName.replace('.', '_')}"
+                        gameList.add(GameItem(gameId, appName, pkgName))
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+
+        gameList.add(DEFAULT_SUPPORTED_GAMES.last()) // Other Games
+        return gameList
     }
 
     fun getActiveGameId(): String {
@@ -34,7 +71,8 @@ class ProfileRepository(context: Context) {
 
     fun getActiveGameItem(): GameItem {
         val gameId = getActiveGameId()
-        return SUPPORTED_GAMES.find { it.id == gameId } ?: SUPPORTED_GAMES.last()
+        val allGames = getInstalledAndDefaultGames()
+        return allGames.find { it.id == gameId } ?: DEFAULT_SUPPORTED_GAMES.first()
     }
 
     fun getActiveProfileForGame(gameId: String): GameProfile {
@@ -93,7 +131,7 @@ class ProfileRepository(context: Context) {
     }
 
     fun createProfile(gameId: String, name: String): GameProfile {
-        val gameItem = SUPPORTED_GAMES.find { it.id == gameId } ?: SUPPORTED_GAMES.last()
+        val gameItem = getInstalledAndDefaultGames().find { it.id == gameId } ?: DEFAULT_SUPPORTED_GAMES.last()
         val newId = "profile_${gameId}_${System.currentTimeMillis()}"
         val newProfile = GameProfile(
             id = newId,
@@ -121,7 +159,7 @@ class ProfileRepository(context: Context) {
 
     fun deleteProfile(profile: GameProfile): Boolean {
         val list = getProfilesForGame(profile.gameId)
-        if (list.size <= 1) return false // Cannot delete last profile
+        if (list.size <= 1) return false
         list.removeAll { it.id == profile.id }
         saveProfilesForGame(profile.gameId, list)
         if (getActiveProfileForGame(profile.gameId).id == profile.id) {
@@ -159,7 +197,7 @@ class ProfileRepository(context: Context) {
 
     fun exportAllProfilesJson(): String {
         val root = JSONObject()
-        for (game in SUPPORTED_GAMES) {
+        for (game in getInstalledAndDefaultGames()) {
             val profiles = getProfilesForGame(game.id)
             val arr = JSONArray()
             for (p in profiles) arr.put(p.toJson())
@@ -171,7 +209,8 @@ class ProfileRepository(context: Context) {
     fun importAllProfilesJson(jsonStr: String): Boolean {
         return try {
             val root = JSONObject(jsonStr)
-            for (game in SUPPORTED_GAMES) {
+            val games = getInstalledAndDefaultGames()
+            for (game in games) {
                 if (root.has(game.id)) {
                     val arr = root.getJSONArray(game.id)
                     val list = mutableListOf<GameProfile>()
@@ -190,7 +229,7 @@ class ProfileRepository(context: Context) {
     }
 
     private fun createDefaultProfileForGame(gameId: String): GameProfile {
-        val gameItem = SUPPORTED_GAMES.find { it.id == gameId } ?: SUPPORTED_GAMES.last()
+        val gameItem = getInstalledAndDefaultGames().find { it.id == gameId } ?: DEFAULT_SUPPORTED_GAMES.last()
         val defaultAsset = when (gameId) {
             "free_fire" -> "crosshairs/crosshair_1.png"
             "free_fire_max" -> "crosshairs/crosshair_2.png"

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/bg_dark">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:background="@color/bg_surface">
+
+        <ImageButton
+            android:id="@+id/btnBack"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_revert"
+            android:contentDescription="Back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="BUILT-IN SCREEN RECORDER"
+            android:textColor="@color/accent_cyan"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            android:paddingStart="12dp" />
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/bg_card"
+                app:cardCornerRadius="12dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="20dp"
+                    android:gravity="center_horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="HIDDEN OVERLAY RECORDER"
+                        android:textColor="@color/accent_cyan"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="The floating crosshair and quick control panel are configured with FLAG_SECURE anti-capture protection. They will be completely invisible on external screen recordings and screenshots."
+                        android:textColor="@color/text_secondary"
+                        android:textSize="12sp"
+                        android:gravity="center"
+                        android:layout_marginTop="8dp" />
+
+                    <TextView
+                        android:id="@+id/tvRecordingStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="STATUS: READY TO RECORD"
+                        android:textColor="@color/accent_green"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:layout_marginTop="16dp" />
+
+                    <Button
+                        android:id="@+id/btnStartRecording"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="16dp"
+                        android:text="START SCREEN RECORDING"
+                        android:textStyle="bold"
+                        android:backgroundTint="@color/accent_green"
+                        android:textColor="@color/bg_dark" />
+
+                    <Button
+                        android:id="@+id/btnStopRecording"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginTop="8dp"
+                        android:text="STOP &amp; SAVE RECORDING"
+                        android:textStyle="bold"
+                        android:backgroundTint="@color/accent_red"
+                        android:textColor="@color/text_primary" />
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

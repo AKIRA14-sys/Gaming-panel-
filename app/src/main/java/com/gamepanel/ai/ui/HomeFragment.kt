@@ -14,6 +14,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.gamepanel.ai.MainActivity
 import com.gamepanel.ai.R
+import com.gamepanel.ai.data.GameItem
 import com.gamepanel.ai.data.ProfileRepository
 import com.gamepanel.ai.databinding.FragmentHomeBinding
 import com.gamepanel.ai.service.CrosshairOverlayService
@@ -24,6 +25,7 @@ class HomeFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var repository: ProfileRepository
+    private var gamesList: List<GameItem> = emptyList()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,8 +51,8 @@ class HomeFragment : Fragment() {
     }
 
     private fun setupGameSelector() {
-        val games = ProfileRepository.SUPPORTED_GAMES
-        val gameNames = games.map { it.name }
+        gamesList = repository.getInstalledAndDefaultGames()
+        val gameNames = gamesList.map { it.name }
 
         val adapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, gameNames).apply {
             setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
@@ -58,17 +60,19 @@ class HomeFragment : Fragment() {
         binding.spinnerGameSelector.adapter = adapter
 
         val currentGameId = repository.getActiveGameId()
-        val currentIdx = games.indexOfFirst { it.id == currentGameId }.coerceAtLeast(0)
+        val currentIdx = gamesList.indexOfFirst { it.id == currentGameId }.coerceAtLeast(0)
         binding.spinnerGameSelector.setSelection(currentIdx)
 
         binding.spinnerGameSelector.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedGame = games[position]
-                if (selectedGame.id != repository.getActiveGameId()) {
-                    repository.setActiveGameId(selectedGame.id)
-                    updatePreviewAndState()
-                    if (repository.isOverlayActive()) {
-                        startOverlayService()
+                if (position in gamesList.indices) {
+                    val selectedGame = gamesList[position]
+                    if (selectedGame.id != repository.getActiveGameId()) {
+                        repository.setActiveGameId(selectedGame.id)
+                        updatePreviewAndState()
+                        if (repository.isOverlayActive()) {
+                            startOverlayService()
+                        }
                     }
                 }
             }
@@ -114,6 +118,7 @@ class HomeFragment : Fragment() {
         binding.navProfiles.setOnClickListener { mainActivity?.navigateTo(MainActivity.NAV_PROFILES) }
         binding.navIntelligence.setOnClickListener { mainActivity?.navigateTo(MainActivity.NAV_INTELLIGENCE) }
         binding.navCalibration.setOnClickListener { mainActivity?.navigateTo(MainActivity.NAV_CALIBRATION) }
+        binding.navScreenRecorder.setOnClickListener { mainActivity?.navigateTo(MainActivity.NAV_SCREEN_RECORDER) }
         binding.navPerformance.setOnClickListener { mainActivity?.navigateTo(MainActivity.NAV_PERFORMANCE) }
         binding.navSettings.setOnClickListener { mainActivity?.navigateTo(MainActivity.NAV_SETTINGS) }
     }
@@ -122,7 +127,7 @@ class HomeFragment : Fragment() {
         val activeGameId = repository.getActiveGameId()
         val activeProfile = repository.getActiveProfileForGame(activeGameId)
 
-        binding.tvGameProfileInfo.text = "Profile: ${activeProfile.name}"
+        binding.tvGameProfileInfo.text = "ACTIVE PROFILE: ${activeProfile.name}"
 
         binding.homeCrosshairPreview.setCrosshairAsset(activeProfile.crosshairAsset)
         binding.homeCrosshairPreview.crosshairColor = activeProfile.color
@@ -137,10 +142,10 @@ class HomeFragment : Fragment() {
 
         val isRunning = repository.isOverlayActive()
         if (isRunning) {
-            binding.tvOverlayStateBadge.text = "OVERLAY ACTIVE"
+            binding.tvOverlayStateBadge.text = "STATUS: INJECTED & ACTIVE"
             binding.tvOverlayStateBadge.setTextColor(resources.getColor(R.color.accent_green, null))
         } else {
-            binding.tvOverlayStateBadge.text = "OFFLINE"
+            binding.tvOverlayStateBadge.text = "STATUS: OFFLINE"
             binding.tvOverlayStateBadge.setTextColor(resources.getColor(R.color.text_muted, null))
         }
     }

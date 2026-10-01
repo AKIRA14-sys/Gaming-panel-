@@ -12,6 +12,7 @@ import com.gamepanel.ai.ui.HomeFragment
 import com.gamepanel.ai.ui.IntelligenceFragment
 import com.gamepanel.ai.ui.PerformanceFragment
 import com.gamepanel.ai.ui.PositionEditorFragment
+import com.gamepanel.ai.ui.ScreenRecorderFragment
 import com.gamepanel.ai.ui.SettingsFragment
 
 class MainActivity : AppCompatActivity() {
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
         const val NAV_PROFILES = "profiles"
         const val NAV_INTELLIGENCE = "intelligence"
         const val NAV_CALIBRATION = "calibration"
+        const val NAV_SCREEN_RECORDER = "screen_recorder"
         const val NAV_PERFORMANCE = "performance"
         const val NAV_SETTINGS = "settings"
     }
@@ -52,6 +54,7 @@ class MainActivity : AppCompatActivity() {
             NAV_PROFILES -> SettingsFragment()
             NAV_INTELLIGENCE -> IntelligenceFragment()
             NAV_CALIBRATION -> CalibrationFragment()
+            NAV_SCREEN_RECORDER -> ScreenRecorderFragment()
             NAV_PERFORMANCE -> PerformanceFragment()
             NAV_SETTINGS -> SettingsFragment()
             else -> HomeFragment()

@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="@color/bg_dark">
 
-    <!-- Header Bar -->
+    <!-- Cyber Header Bar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -20,18 +20,19 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="GAMEPANEL AI"
+            android:text="⚡ GAMEPANEL AI [SYSTEM V1.0]"
             android:textColor="@color/accent_cyan"
-            android:textSize="18sp"
-            android:textStyle="bold" />
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:letterSpacing="0.05" />
 
         <TextView
             android:id="@+id/tvOverlayStateBadge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="OFFLINE"
+            android:text="SYSTEM STATUS: OFFLINE"
             android:textColor="@color/text_muted"
-            android:textSize="11sp"
+            android:textSize="10sp"
             android:textStyle="bold"
             android:background="@color/bg_card"
             android:paddingStart="8dp"
@@ -57,8 +58,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="@color/bg_card"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
+                app:cardCornerRadius="10dp"
+                app:strokeColor="@color/accent_cyan"
+                app:strokeWidth="1dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -69,8 +72,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="ACTIVE TARGET GAME"
-                        android:textColor="@color/text_secondary"
+                        android:text="TARGET APPLICATION SELECTOR"
+                        android:textColor="@color/accent_green"
                         android:textSize="11sp"
                         android:textStyle="bold" />
 
@@ -85,8 +88,8 @@
                         android:id="@+id/tvGameProfileInfo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Profile: Free Fire Main"
-                        android:textColor="@color/accent_green"
+                        android:text="ACTIVE PROFILE: Free Fire Main"
+                        android:textColor="@color/accent_cyan"
                         android:textSize="12sp"
                         android:layout_marginTop="6dp" />
                 </LinearLayout>
@@ -98,8 +101,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="@color/bg_card"
-                app:cardCornerRadius="12dp"
-                app:cardElevation="0dp">
+                app:cardCornerRadius="10dp"
+                app:strokeColor="@color/accent_cyan"
+                app:strokeWidth="1dp"
+                app:cardElevation="4dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -111,8 +116,8 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="LIVE CROSSHAIR PREVIEW"
-                        android:textColor="@color/text_secondary"
+                        android:text="REAL-TIME CROSSHAIR RADAR PREVIEW"
+                        android:textColor="@color/accent_green"
                         android:textSize="11sp"
                         android:textStyle="bold" />
 
@@ -153,7 +158,7 @@
                             android:layout_height="50dp"
                             android:layout_weight="1"
                             android:layout_marginEnd="6dp"
-                            android:text="START CROSSHAIR"
+                            android:text="INJECT OVERLAY"
                             android:textStyle="bold"
                             android:backgroundTint="@color/accent_cyan"
                             android:textColor="@color/bg_dark" />
@@ -164,7 +169,7 @@
                             android:layout_height="50dp"
                             android:layout_weight="1"
                             android:layout_marginStart="6dp"
-                            android:text="STOP OVERLAY"
+                            android:text="TERMINATE"
                             android:textStyle="bold"
                             android:backgroundTint="@color/accent_red"
                             android:textColor="@color/text_primary" />
@@ -175,18 +180,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="42dp"
                         android:layout_marginTop="8dp"
-                        android:text="OPEN FLOATING PANEL"
+                        android:text="LAUNCH FLOATING CHEAT PANEL"
                         android:textSize="12sp"
                         android:backgroundTint="@color/bg_surface"
                         android:textColor="@color/accent_cyan" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Navigation Grid to Utility Sections -->
+            <!-- Navigation Grid -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="GAMING UTILITIES"
+                android:text="SYSTEM UTILITY HUB"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp"
                 android:textStyle="bold"
@@ -259,7 +264,7 @@
                     android:layout_height="56dp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
-                    android:text="INTELLIGENCE"
+                    android:text="AI INTELLIGENCE"
                     android:textSize="11sp"
                     android:backgroundTint="@color/bg_card"
                     android:textColor="@color/accent_cyan" />
@@ -282,6 +287,17 @@
                 android:orientation="horizontal">
 
                 <Button
+                    android:id="@+id/navScreenRecorder"
+                    android:layout_width="0dp"
+                    android:layout_height="56dp"
+                    android:layout_weight="1"
+                    android:layout_margin="4dp"
+                    android:text="RECORDER (HIDDEN)"
+                    android:textSize="11sp"
+                    android:backgroundTint="@color/bg_card"
+                    android:textColor="@color/accent_green" />
+
+                <Button
                     android:id="@+id/navPerformance"
                     android:layout_width="0dp"
                     android:layout_height="56dp"
@@ -291,18 +307,17 @@
                     android:textSize="11sp"
                     android:backgroundTint="@color/bg_card"
                     android:textColor="@color/text_primary" />
-
-                <Button
-                    android:id="@+id/navSettings"
-                    android:layout_width="0dp"
-                    android:layout_height="56dp"
-                    android:layout_weight="1"
-                    android:layout_margin="4dp"
-                    android:text="SETTINGS"
-                    android:textSize="11sp"
-                    android:backgroundTint="@color/bg_card"
-                    android:textColor="@color/text_primary" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/navSettings"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_margin="4dp"
+                android:text="SYSTEM SETTINGS &amp; BACKUP"
+                android:textSize="11sp"
+                android:backgroundTint="@color/bg_card"
+                android:textColor="@color/text_primary" />
 
         </LinearLayout>
     </ScrollView>
