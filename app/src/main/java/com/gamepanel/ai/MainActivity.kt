@@ -1,7 +1,9 @@
 package com.gamepanel.ai
 
 import android.os.Bundle
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.gamepanel.ai.data.ProfileRepository
 import com.gamepanel.ai.databinding.ActivityMainBinding
@@ -40,9 +42,30 @@ class MainActivity : AppCompatActivity() {
 
         repository = ProfileRepository(this)
 
+        setupBottomNav()
+
         if (savedInstanceState == null) {
             navigateTo(NAV_HOME, isRoot = true)
         }
+    }
+
+    private fun setupBottomNav() {
+        binding.btnTabHome.setOnClickListener { navigateTo(NAV_HOME, isRoot = true) }
+        binding.btnTabGallery.setOnClickListener { navigateTo(NAV_GALLERY) }
+        binding.btnTabCustomizer.setOnClickListener { navigateTo(NAV_CUSTOMIZER) }
+        binding.btnTabTools.setOnClickListener { navigateTo(NAV_INTELLIGENCE) }
+        binding.btnTabSettings.setOnClickListener { navigateTo(NAV_SETTINGS) }
+    }
+
+    private fun updateNavSelection(activeDestination: String) {
+        val cyan = ContextCompat.getColor(this, R.color.accent_cyan)
+        val muted = ContextCompat.getColor(this, R.color.text_muted)
+
+        binding.tvTabHome.setTextColor(if (activeDestination == NAV_HOME) cyan else muted)
+        binding.tvTabGallery.setTextColor(if (activeDestination == NAV_GALLERY) cyan else muted)
+        binding.tvTabCustomizer.setTextColor(if (activeDestination == NAV_CUSTOMIZER) cyan else muted)
+        binding.tvTabTools.setTextColor(if (activeDestination == NAV_INTELLIGENCE || activeDestination == NAV_PERFORMANCE) cyan else muted)
+        binding.tvTabSettings.setTextColor(if (activeDestination == NAV_SETTINGS || activeDestination == NAV_PROFILES) cyan else muted)
     }
 
     fun navigateTo(destination: String, bundle: Bundle? = null, isRoot: Boolean = false) {
@@ -70,6 +93,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         transaction.commit()
+        updateNavSelection(destination)
     }
 
     override fun onBackPressed() {

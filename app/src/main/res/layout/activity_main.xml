@@ -1,6 +1,150 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/fragmentContainer"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_dark" />
+    android:orientation="vertical"
+    android:background="@color/bg_dark">
+
+    <FrameLayout
+        android:id="@+id/fragmentContainer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Cyber Bottom Navigation Bar -->
+    <LinearLayout
+        android:id="@+id/bottomNavContainer"
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:orientation="horizontal"
+        android:background="@color/bg_surface"
+        android:elevation="12dp">
+
+        <LinearLayout
+            android:id="@+id/btnTabHome"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚡"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/tvTabHome"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="HUB"
+                android:textColor="@color/accent_cyan"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnTabGallery"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎯"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/tvTabGallery"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GALLERY"
+                android:textColor="@color/text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnTabCustomizer"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🎨"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/tvTabCustomizer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CUSTOM"
+                android:textColor="@color/text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnTabTools"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="🚀"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/tvTabTools"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="INTELLIGENCE"
+                android:textColor="@color/text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/btnTabSettings"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="?selectableItemBackground">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⚙️"
+                android:textSize="16sp" />
+            <TextView
+                android:id="@+id/tvTabSettings"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="SETTINGS"
+                android:textColor="@color/text_muted"
+                android:textSize="10sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -6,7 +6,7 @@
     android:orientation="vertical"
     android:background="@color/bg_dark">
 
-    <!-- Cyber Header Bar -->
+    <!-- Cyber Header Bar with Dynamic Stats -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="56dp"
@@ -20,18 +20,18 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="⚡ GAMEPANEL AI [SYSTEM V1.0]"
+            android:text="⚡ GAMEPANEL AI [CYBER MOD HUD]"
             android:textColor="@color/accent_cyan"
-            android:textSize="16sp"
+            android:textSize="15sp"
             android:textStyle="bold"
-            android:letterSpacing="0.05" />
+            android:letterSpacing="0.03" />
 
         <TextView
-            android:id="@+id/tvOverlayStateBadge"
+            android:id="@+id/tvSystemGauges"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="SYSTEM STATUS: OFFLINE"
-            android:textColor="@color/text_muted"
+            android:text="CPU: 14% | 60 FPS"
+            android:textColor="@color/accent_green"
             android:textSize="10sp"
             android:textStyle="bold"
             android:background="@color/bg_card"
@@ -52,14 +52,96 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <!-- Target Game Selector Card -->
+            <!-- Independent Master Power Switches Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="@color/bg_card"
-                app:cardCornerRadius="10dp"
+                app:cardCornerRadius="12dp"
                 app:strokeColor="@color/accent_cyan"
+                app:strokeWidth="1dp"
+                app:cardElevation="6dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="MASTER POWER &amp; OVERLAY CONTROL"
+                        android:textColor="@color/accent_cyan"
+                        android:textSize="11sp"
+                        android:textStyle="bold" />
+
+                    <!-- Crosshair Switch Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:layout_marginTop="12dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="🎯 CROSSHAIR OVERLAY SIGHT"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchCrosshairMaster"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:useMaterialThemeColors="true" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/bg_card_stroke"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginBottom="8dp" />
+
+                    <!-- Floating Panel Switch Row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="🎛️ FLOATING QUICK PANEL BUBBLE"
+                            android:textColor="@color/text_primary"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <com.google.android.material.switchmaterial.SwitchMaterial
+                            android:id="@+id/switchPanelMaster"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:useMaterialThemeColors="true" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Target Game Profile Selector Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                app:cardBackgroundColor="@color/bg_card"
+                app:cardCornerRadius="12dp"
+                app:strokeColor="@color/accent_green"
                 app:strokeWidth="1dp"
                 app:cardElevation="4dp">
 
@@ -72,7 +154,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TARGET APPLICATION SELECTOR"
+                        android:text="TARGET APPLICATION &amp; HUD PROFILE"
                         android:textColor="@color/accent_green"
                         android:textSize="11sp"
                         android:textStyle="bold" />
@@ -95,13 +177,13 @@
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Crosshair Preview & Main Action Card -->
+            <!-- Crosshair Preview & Pro Sight Presets Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
                 app:cardBackgroundColor="@color/bg_card"
-                app:cardCornerRadius="10dp"
+                app:cardCornerRadius="12dp"
                 app:strokeColor="@color/accent_cyan"
                 app:strokeWidth="1dp"
                 app:cardElevation="4dp">
@@ -125,7 +207,7 @@
                         android:layout_width="160dp"
                         android:layout_height="160dp"
                         android:layout_marginTop="12dp"
-                        android:layout_marginBottom="16dp"
+                        android:layout_marginBottom="12dp"
                         android:background="@color/bg_surface">
 
                         <View
@@ -147,43 +229,67 @@
                             android:layout_gravity="center" />
                     </FrameLayout>
 
+                    <!-- Pro Sight Presets Bar -->
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="PRO SIGHT PRESETS (1-TAP QUICK APPLY)"
+                        android:textColor="@color/text_secondary"
+                        android:textSize="10sp"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="6dp" />
+
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:gravity="center">
 
                         <Button
-                            android:id="@+id/btnStartOverlay"
+                            android:id="@+id/btnPresetDot"
                             android:layout_width="0dp"
-                            android:layout_height="50dp"
+                            android:layout_height="36dp"
                             android:layout_weight="1"
-                            android:layout_marginEnd="6dp"
-                            android:text="INJECT OVERLAY"
-                            android:textStyle="bold"
-                            android:backgroundTint="@color/accent_cyan"
-                            android:textColor="@color/bg_dark" />
+                            android:layout_margin="2dp"
+                            android:text="DOT"
+                            android:textSize="9sp"
+                            android:backgroundTint="@color/bg_surface"
+                            android:textColor="@color/accent_cyan" />
 
                         <Button
-                            android:id="@+id/btnStopOverlay"
+                            android:id="@+id/btnPresetCircle"
                             android:layout_width="0dp"
-                            android:layout_height="50dp"
+                            android:layout_height="36dp"
                             android:layout_weight="1"
-                            android:layout_marginStart="6dp"
-                            android:text="TERMINATE"
-                            android:textStyle="bold"
-                            android:backgroundTint="@color/accent_red"
-                            android:textColor="@color/text_primary" />
+                            android:layout_margin="2dp"
+                            android:text="SNIPER"
+                            android:textSize="9sp"
+                            android:backgroundTint="@color/bg_surface"
+                            android:textColor="@color/accent_green" />
+
+                        <Button
+                            android:id="@+id/btnPresetCross"
+                            android:layout_width="0dp"
+                            android:layout_height="36dp"
+                            android:layout_weight="1"
+                            android:layout_margin="2dp"
+                            android:text="TACTICAL"
+                            android:textSize="9sp"
+                            android:backgroundTint="@color/bg_surface"
+                            android:textColor="@color/accent_yellow" />
+
+                        <Button
+                            android:id="@+id/btnPresetRing"
+                            android:layout_width="0dp"
+                            android:layout_height="36dp"
+                            android:layout_weight="1"
+                            android:layout_margin="2dp"
+                            android:text="SHOTGUN"
+                            android:textSize="9sp"
+                            android:backgroundTint="@color/bg_surface"
+                            android:textColor="@color/accent_red" />
                     </LinearLayout>
 
-                    <Button
-                        android:id="@+id/btnShowQuickPanel"
-                        android:layout_width="match_parent"
-                        android:layout_height="42dp"
-                        android:layout_marginTop="8dp"
-                        android:text="LAUNCH FLOATING CHEAT PANEL"
-                        android:textSize="12sp"
-                        android:backgroundTint="@color/bg_surface"
-                        android:textColor="@color/accent_cyan" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -191,7 +297,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="SYSTEM UTILITY HUB"
+                android:text="CYBER UTILITY SUITE"
                 android:textColor="@color/text_secondary"
                 android:textSize="11sp"
                 android:textStyle="bold"
@@ -205,7 +311,7 @@
                 <Button
                     android:id="@+id/navGallery"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:text="GALLERY (200+)"
@@ -216,7 +322,7 @@
                 <Button
                     android:id="@+id/navCustomizer"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:text="CUSTOMIZER"
@@ -233,7 +339,7 @@
                 <Button
                     android:id="@+id/navPositionEditor"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:text="POSITION EDITOR"
@@ -244,7 +350,7 @@
                 <Button
                     android:id="@+id/navProfiles"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:text="PROFILES"
@@ -261,7 +367,7 @@
                 <Button
                     android:id="@+id/navIntelligence"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:text="AI INTELLIGENCE"
@@ -272,7 +378,7 @@
                 <Button
                     android:id="@+id/navCalibration"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:text="CALIBRATION"
@@ -289,7 +395,7 @@
                 <Button
                     android:id="@+id/navScreenRecorder"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:text="RECORDER (HIDDEN)"
@@ -300,7 +406,7 @@
                 <Button
                     android:id="@+id/navPerformance"
                     android:layout_width="0dp"
-                    android:layout_height="56dp"
+                    android:layout_height="52dp"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:text="PERFORMANCE"

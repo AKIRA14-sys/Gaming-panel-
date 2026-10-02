@@ -1,6 +1,7 @@
 package com.gamepanel.ai.ui
 
 import android.content.Intent
+import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -41,6 +42,8 @@ class HomeFragment : Fragment() {
         repository = ProfileRepository(requireContext())
 
         setupGameSelector()
+        setupMasterSwitches()
+        setupPresets()
         setupButtons()
         updatePreviewAndState()
     }
@@ -71,7 +74,7 @@ class HomeFragment : Fragment() {
                         repository.setActiveGameId(selectedGame.id)
                         updatePreviewAndState()
                         if (repository.isOverlayActive()) {
-                            startOverlayService()
+                            sendServiceAction(CrosshairOverlayService.ACTION_UPDATE_PROFILE)
                         }
                     }
                 }
@@ -80,37 +83,91 @@ class HomeFragment : Fragment() {
         }
     }
 
+    private fun setupMasterSwitches() {
+        binding.switchCrosshairMaster.isChecked = repository.isOverlayActive()
+        binding.switchPanelMaster.isChecked = false
+
+        binding.switchCrosshairMaster.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (checkOverlayPermission()) {
+                    startOverlayService()
+                } else {
+                    binding.switchCrosshairMaster.isChecked = false
+                    requestOverlayPermission()
+                }
+            } else {
+                stopOverlayService()
+            }
+        }
+
+        binding.switchPanelMaster.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                if (checkOverlayPermission()) {
+                    sendServiceAction(CrosshairOverlayService.ACTION_SHOW_PANEL)
+                } else {
+                    binding.switchPanelMaster.isChecked = false
+                    requestOverlayPermission()
+                }
+            } else {
+                sendServiceAction(CrosshairOverlayService.ACTION_HIDE_PANEL)
+            }
+        }
+    }
+
+    private fun setupPresets() {
+        binding.btnPresetDot.setOnClickListener {
+            val profile = repository.getActiveProfileForGame(repository.getActiveGameId())
+            profile.crosshairAsset = "crosshairs/crosshair_1.png"
+            profile.sizeDp = 20f
+            profile.opacity = 1.0f
+            profile.color = Color.CYAN
+            profile.centerDotEnabled = true
+            profile.centerDotSizeDp = 6f
+            repository.saveProfile(profile)
+            updatePreviewAndState()
+            sendServiceAction(CrosshairOverlayService.ACTION_UPDATE_PROFILE)
+            Toast.makeText(requireContext(), "Applied Precision Dot Sight", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnPresetCircle.setOnClickListener {
+            val profile = repository.getActiveProfileForGame(repository.getActiveGameId())
+            profile.crosshairAsset = "crosshairs/crosshair_25.png"
+            profile.sizeDp = 35f
+            profile.opacity = 0.85f
+            profile.color = Color.GREEN
+            repository.saveProfile(profile)
+            updatePreviewAndState()
+            sendServiceAction(CrosshairOverlayService.ACTION_UPDATE_PROFILE)
+            Toast.makeText(requireContext(), "Applied Sniper Circle Sight", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnPresetCross.setOnClickListener {
+            val profile = repository.getActiveProfileForGame(repository.getActiveGameId())
+            profile.crosshairAsset = "crosshairs/crosshair_50.png"
+            profile.sizeDp = 32f
+            profile.opacity = 0.90f
+            profile.color = Color.YELLOW
+            repository.saveProfile(profile)
+            updatePreviewAndState()
+            sendServiceAction(CrosshairOverlayService.ACTION_UPDATE_PROFILE)
+            Toast.makeText(requireContext(), "Applied Tactical Cross Sight", Toast.LENGTH_SHORT).show()
+        }
+
+        binding.btnPresetRing.setOnClickListener {
+            val profile = repository.getActiveProfileForGame(repository.getActiveGameId())
+            profile.crosshairAsset = "crosshairs/crosshair_100.png"
+            profile.sizeDp = 42f
+            profile.opacity = 0.80f
+            profile.color = Color.RED
+            repository.saveProfile(profile)
+            updatePreviewAndState()
+            sendServiceAction(CrosshairOverlayService.ACTION_UPDATE_PROFILE)
+            Toast.makeText(requireContext(), "Applied Shotgun Ring Sight", Toast.LENGTH_SHORT).show()
+        }
+    }
+
     private fun setupButtons() {
         val mainActivity = activity as? MainActivity
-
-        binding.btnStartOverlay.setOnClickListener {
-            if (checkOverlayPermission()) {
-                startOverlayService()
-                updatePreviewAndState()
-            } else {
-                requestOverlayPermission()
-            }
-        }
-
-        binding.btnStopOverlay.setOnClickListener {
-            stopOverlayService()
-            updatePreviewAndState()
-        }
-
-        binding.btnShowQuickPanel.setOnClickListener {
-            if (checkOverlayPermission()) {
-                val intent = Intent(requireContext(), CrosshairOverlayService::class.java).apply {
-                    action = CrosshairOverlayService.ACTION_SHOW_PANEL
-                }
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    requireContext().startForegroundService(intent)
-                } else {
-                    requireContext().startService(intent)
-                }
-            } else {
-                requestOverlayPermission()
-            }
-        }
 
         binding.navGallery.setOnClickListener { mainActivity?.navigateTo(MainActivity.NAV_GALLERY) }
         binding.navCustomizer.setOnClickListener { mainActivity?.navigateTo(MainActivity.NAV_CUSTOMIZER) }
@@ -141,13 +198,7 @@ class HomeFragment : Fragment() {
         binding.homeCrosshairPreview.centerDotOpacity = activeProfile.centerDotOpacity
 
         val isRunning = repository.isOverlayActive()
-        if (isRunning) {
-            binding.tvOverlayStateBadge.text = "STATUS: INJECTED & ACTIVE"
-            binding.tvOverlayStateBadge.setTextColor(resources.getColor(R.color.accent_green, null))
-        } else {
-            binding.tvOverlayStateBadge.text = "STATUS: OFFLINE"
-            binding.tvOverlayStateBadge.setTextColor(resources.getColor(R.color.text_muted, null))
-        }
+        binding.switchCrosshairMaster.isChecked = isRunning
     }
 
     private fun checkOverlayPermission(): Boolean {
@@ -181,6 +232,17 @@ class HomeFragment : Fragment() {
         }
         requireContext().startService(intent)
         repository.setOverlayActive(false)
+    }
+
+    private fun sendServiceAction(actionName: String) {
+        val intent = Intent(requireContext(), CrosshairOverlayService::class.java).apply {
+            action = actionName
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            requireContext().startForegroundService(intent)
+        } else {
+            requireContext().startService(intent)
+        }
     }
 
     override fun onDestroyView() {
