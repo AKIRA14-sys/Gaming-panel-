@@ -40,6 +40,7 @@ class CrosshairOverlayService : Service() {
         const val ACTION_STOP = "com.gamepanel.ai.ACTION_STOP"
         const val ACTION_UPDATE_PROFILE = "com.gamepanel.ai.ACTION_UPDATE_PROFILE"
         const val ACTION_SHOW_PANEL = "com.gamepanel.ai.ACTION_SHOW_PANEL"
+        const val ACTION_HIDE_PANEL = "com.gamepanel.ai.ACTION_HIDE_PANEL"
     }
 
     override fun onCreate() {
@@ -55,6 +56,11 @@ class CrosshairOverlayService : Service() {
             stopForeground(STOP_FOREGROUND_REMOVE)
             stopSelf()
             return START_NOT_STICKY
+        }
+
+        if (intent?.action == ACTION_HIDE_PANEL) {
+            removeQuickPanel()
+            return START_STICKY
         }
 
         try {
@@ -184,7 +190,7 @@ class CrosshairOverlayService : Service() {
             val btnToggle = quickPanelView?.findViewById<Button>(R.id.btnToggleCrosshair)
             val btnClose = quickPanelView?.findViewById<ImageButton>(R.id.btnClosePanel)
             val btnOpenApp = quickPanelView?.findViewById<Button>(R.id.btnOpenApp)
-            val btnStopOverlay = quickPanelView?.findViewById<Button>(R.id.btnStopOverlay)
+            val btnHidePanel = quickPanelView?.findViewById<Button>(R.id.btnHidePanel)
             val sbOpacity = quickPanelView?.findViewById<SeekBar>(R.id.sbPanelOpacity)
             val sbSize = quickPanelView?.findViewById<SeekBar>(R.id.sbPanelSize)
 
@@ -206,25 +212,30 @@ class CrosshairOverlayService : Service() {
 
             tvActiveGame?.text = "GAME: ${currentProfile?.gameName ?: "Free Fire"}"
 
+            var isSightVisible = crosshairOverlayView?.visibility == View.VISIBLE
+            btnToggle?.text = if (isSightVisible) "SIGHT ON" else "SIGHT OFF"
+
             btnToggle?.setOnClickListener {
-                val isVisible = crosshairOverlayView?.visibility == View.VISIBLE
-                crosshairOverlayView?.visibility = if (isVisible) View.GONE else View.VISIBLE
-                btnToggle.text = if (isVisible) "OFF" else "ON"
+                isSightVisible = crosshairOverlayView?.visibility == View.VISIBLE
+                if (isSightVisible) {
+                    crosshairOverlayView?.visibility = View.GONE
+                    btnToggle.text = "SIGHT OFF"
+                    btnToggle.setBackgroundColor(Color.GRAY)
+                } else {
+                    crosshairOverlayView?.visibility = View.VISIBLE
+                    btnToggle.text = "SIGHT ON"
+                    btnToggle.setBackgroundColor(resources.getColor(R.color.accent_green, null))
+                }
             }
 
             btnClose?.setOnClickListener { removeQuickPanel() }
+            btnHidePanel?.setOnClickListener { removeQuickPanel() }
 
             btnOpenApp?.setOnClickListener {
                 val appIntent = Intent(this, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_SINGLE_TOP
                 }
                 startActivity(appIntent)
-            }
-
-            btnStopOverlay?.setOnClickListener {
-                repository.setOverlayActive(false)
-                stopForeground(STOP_FOREGROUND_REMOVE)
-                stopSelf()
             }
 
             fun updateDesignLabel() {
